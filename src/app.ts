@@ -2,6 +2,7 @@ require('dotenv').config()
 const { Context, Markup, Telegraf } = require('telegraf')
 const { Update } = require('typegram')
 const fetch = require('node-fetch');
+const port = process.env.PORT || 8080;
 
 type TBody = {
   title: string;
