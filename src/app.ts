@@ -1,40 +1,54 @@
-import { Context, Markup, Telegraf } from 'telegraf';
-import { Update } from 'typegram';
-import fetch from 'node-fetch';
+require('dotenv').config()
+const { Context, Markup, Telegraf } = require('telegraf')
+const { Update } = require('typegram')
+const fetch = require('node-fetch');
 
 const fileUrl = "https://api.nasa.gov/planetary/apod?api_key=" + process.env.API_KEY;
 
 type TBody = {
   title: string;
   explanation: string;
+  url: string;
   hdurl: string;
 };
 
 const token: string = process.env.BOT_TOKEN as string;
 
-const bot: Telegraf<Context<Update>> = new Telegraf(token);
+const bot = new Telegraf(token)
 
-bot.start((ctx) => {
+bot.start((ctx: any) => {
   ctx.reply(
-    'Здравствуйте ' + ctx.from.first_name + '! ',
-    Markup.inlineKeyboard([
-      Markup.button.callback('Фото дня', 'photoDay'),
-    ])
+    'Здравствуйте ' + ctx.from.first_name + '! \n\nНа данный момент бот находится в разработке, на данный момент реализовано получаение фото дня. В дальшейшем планируется реализовать получение фотографий Марса с марсохода Curiosity \n\n\n\nСписок команд: \n\n/photo_day - Фото дня'
   );
 });
 
-bot.action('photoDay', async (ctx) => {
-  const response = await fetch(fileUrl);
-  const body: any = await response.json();
+bot.command('/photo_day', async (ctx: any) => {
+  fetch(fileUrl)
+  .then((response: any) => {
+    if (response.ok) {
+      response.json().then((data: any) => {
+        const obj: TBody = {
+          title: data.title,
+          explanation: data.explanation,
+          url: data.url,
+          hdurl: data.hdurl,
+        }
 
-  const data: TBody = {
-    title: body.title,
-    explanation: body.explanation,
-    hdurl: body.hdurl,
-  }
+        const explanationShort = obj?.explanation.length <= 800 ? obj.explanation : ''
 
-  ctx.reply(data.title + "\n\n" + data.explanation);
-  ctx.replyWithPhoto(data.hdurl);
+        const opts = {
+          'caption': `*${obj.title}*\n\n${explanationShort} \n\n [Full photo](${data.hdurl})`,
+          'parse_mode': 'markdown'
+        };
+
+        ctx.replyWithPhoto({url: obj.url}, opts)
+      });  
+    }
+  }).
+  catch((error: any) => {
+      ctx.reply(error)
+      console.log(error);
+  });
 });
 
 bot.launch();

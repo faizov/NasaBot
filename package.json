@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js"
@@ -19,7 +18,8 @@
   },
   "dependencies": {
     "@types/node-fetch": "2.6.1",
-    "node-fetch": "3.2.2",
+    "dotenv": "16.0.0",
+    "node-fetch": "2.6.7",
     "telegraf": "4.7.0"
   }
 }
