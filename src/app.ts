@@ -65,7 +65,7 @@ bot.command('/mars', (ctx: any) => {
 
             if (data.photos[0]) {
               ctx.replyWithPhoto(
-                {url: randomPhoto.img_src}, 
+                {url: randomPhoto?.img_src}, 
                 {caption: randomPhoto.earth_date}
               )
             } else {
