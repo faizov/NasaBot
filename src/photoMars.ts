@@ -17,7 +17,6 @@ const fetchMarsPhoto = (ctx: any) => {
         .then((response: any) => {
         if (response.ok) {
             response.json().then( async (data: any) => {
-                console.log(`data.photos[0]`, data.photos[0])
                 if (data.photos[0]) {
                     const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length) + 1]
                     const obj: TMars = {
