@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/node-fetch": "2.6.1",
     "dotenv": "16.0.0",
+    "express": "4.17.3",
     "node-fetch": "2.6.7",
     "telegraf": "4.7.0"
   }
