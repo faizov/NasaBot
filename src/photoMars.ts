@@ -39,6 +39,7 @@ const fetchMarsPhoto = (ctx: any) => {
                 }
             })
             .catch((error: any) => {
+                console.log(`photoMarsUrl`, photoMarsUrl)
                 console.log(`error`, error)
                 ctx.reply('Продолжаем искать классную фоточку...')
                 fetchMarsPhoto(ctx)
