@@ -1,11 +1,12 @@
 const fetchMars = require('node-fetch');
+const probe = require('probe-image-size');
 
 type TMars = {
     img_src: string;
     earth_date: string;
 };
 
-const fetchMarsPhoto =  (ctx: any) => {
+const fetchMarsPhoto = (ctx: any) => {
     const intervalYear = Math.floor(Math.random() * (2022 - 2012)) + 2012;
     const intervalMonth  = Math.floor(Math.random() * (12 - 1)) + 1;
     const intervalDay  = Math.floor(Math.random() * (31 - 1)) + 1;
@@ -15,28 +16,34 @@ const fetchMarsPhoto =  (ctx: any) => {
     fetchMars(photoMarsUrl)
         .then((response: any) => {
         if (response.ok) {
-            response.json().then((data: any) => {
-
-            
-
-            const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length) + 1]
-
-            if (data.photos[0]) {
-
-                const obj: TMars = {
-                    img_src: randomPhoto.img_src,
-                    earth_date: randomPhoto.earth_date,
+            response.json().then( async (data: any) => {
+                console.log(`data.photos[0]`, data.photos[0])
+                if (data.photos[0]) {
+                    const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length) + 1]
+                    const obj: TMars = {
+                        img_src: randomPhoto.img_src,
+                        earth_date: randomPhoto.earth_date,
+                    }
+                    const result = await probe(obj.img_src);
+                    
+                    if (obj.img_src && (result.width && result.height) > 600) {
+                        ctx.replyWithPhoto(
+                            {url: obj.img_src}, 
+                            {caption: obj.earth_date}
+                        )
+                    } else {
+                        fetchMarsPhoto(ctx)
+                    }
+                    
+                } else {
+                    fetchMarsPhoto(ctx)
                 }
-
-                obj.img_src && 
-                ctx.replyWithPhoto(
-                    {url: obj.img_src}, 
-                    {caption: randomPhoto ? obj.earth_date : ''}
-                )
-            } else {
+            })
+            .catch((error: any) => {
+                console.log(`error`, error)
+                ctx.reply('Продолжаем искать классную фоточку...')
                 fetchMarsPhoto(ctx)
-            }
-            });
+            })
         }
         }).
         catch((error: any) => {
