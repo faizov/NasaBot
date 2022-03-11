@@ -3,6 +3,12 @@ const { Context, Markup, Telegraf } = require('telegraf')
 const { Update } = require('typegram')
 const fetch = require('node-fetch');
 
+const express = require('express')
+const app = express()
+var port = process.env.PORT || 8080;
+var server=app.listen(port,function() {
+  console.log("app running on port 8080"); });
+
 type TBody = {
   title: string;
   explanation: string;
