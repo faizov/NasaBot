@@ -28,9 +28,10 @@ const fetchMarsPhoto =  (ctx: any) => {
                     earth_date: randomPhoto.earth_date,
                 }
 
+                obj.img_src && 
                 ctx.replyWithPhoto(
                     {url: obj.img_src}, 
-                    {caption: randomPhoto && obj.earth_date}
+                    {caption: randomPhoto ? obj.earth_date : ''}
                 )
             } else {
                 fetchMarsPhoto(ctx)
