@@ -7,7 +7,7 @@ type TMars = {
 };
 
 const fetchMarsPhoto = (ctx: any) => {
-    const intervalYear = Math.floor(Math.random() * (2022 - 2012)) + 2012;
+    const intervalYear = Math.floor(Math.random() * (2022 - 2013)) + 2012;
     const intervalMonth  = Math.floor(Math.random() * (12 - 1)) + 1;
     const intervalDay  = Math.floor(Math.random() * (31 - 1)) + 1;
     
@@ -17,7 +17,7 @@ const fetchMarsPhoto = (ctx: any) => {
         .then((response: any) => {
         if (response.ok) {
             response.json().then( async (data: any) => {
-                if (data.photos[0]) {
+                if (data.photos.length > 0) {
                     const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length) + 1]
                     const obj: TMars = {
                         img_src: randomPhoto.img_src,
