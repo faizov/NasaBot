@@ -1,5 +1,6 @@
 require('dotenv').config()
 const { Telegraf } = require('telegraf')
+var CronJob = require('cron').CronJob;
 
 const express = require('express')
 const app = express()
@@ -23,8 +24,10 @@ bot.command('/photo_day', (ctx: any) => {
   photoDay.fetchPhotoDay(ctx)
 });
 
-bot.command('/mars', (ctx: any) => {
-  photoMars.fetchMarsPhoto(ctx);
+bot.command('/mars', async (ctx: any) => {
+  const startMessage = await ctx.reply('Начинаем искать классную фоточку...')
+
+  photoMars.fetchMarsPhoto(ctx, startMessage.message_id);
 });
 
 bot.launch();

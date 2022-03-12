@@ -6,7 +6,7 @@ type TMars = {
     earth_date: string;
 };
 
-const fetchMarsPhoto = (ctx: any) => {
+const fetchMarsPhoto = (ctx: any, id: number) => {
     const intervalYear = Math.floor(Math.random() * (2022 - 2013)) + 2012;
     const intervalMonth  = Math.floor(Math.random() * (12 - 1)) + 1;
     const intervalDay  = Math.floor(Math.random() * (31 - 1)) + 1;
@@ -24,25 +24,24 @@ const fetchMarsPhoto = (ctx: any) => {
                         earth_date: randomPhoto.earth_date,
                     }
                     const result = await probe(obj.img_src);
-                    
                     if (obj.img_src && (result.width && result.height) > 600) {
+                        ctx.deleteMessage(id)
                         ctx.replyWithPhoto(
                             {url: obj.img_src}, 
                             {caption: obj.earth_date}
                         )
                     } else {
-                        fetchMarsPhoto(ctx)
+                        fetchMarsPhoto(ctx, id)
                     }
                     
                 } else {
-                    fetchMarsPhoto(ctx)
+                    fetchMarsPhoto(ctx, id)
                 }
             })
             .catch((error: any) => {
                 console.log(`photoMarsUrl`, photoMarsUrl)
                 console.log(`error`, error)
-                ctx.reply('Продолжаем искать классную фоточку...')
-                fetchMarsPhoto(ctx)
+                fetchMarsPhoto(ctx, id)
             })
         }
         }).
