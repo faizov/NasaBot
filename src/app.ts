@@ -30,6 +30,25 @@ bot.command('/mars', async (ctx: any) => {
   photoMars.fetchMarsPhoto(ctx, startMessage.message_id);
 });
 
+bot.command('/photo_day_start', (ctx: any) => {
+  ctx.reply('Теперь фото дня будет приходить каждый день в 12:00')
+  const job = new CronJob('00 12 * * *', function() {
+    photoDay.fetchPhotoDay(ctx)
+  }, null, true, 'Europe/Moscow');
+
+  job.start();
+});
+
+bot.command('/photo_day_stop', (ctx: any) => {
+  ctx.reply('Теперь фото дня НЕ будет приходить каждый день в 12:00')
+  const job = new CronJob('40 19 * * *', function() {
+    photoDay.fetchPhotoDay(ctx)
+  }, null, true, 'Europe/Moscow');
+
+  job.stop();
+});
+
+
 bot.launch();
 
 // Enable graceful stop
