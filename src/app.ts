@@ -37,7 +37,7 @@ bot.command('/photo_day_start', (ctx: any) => {
     isStartPhotoDay= true
     ctx.reply('Теперь фото дня будет приходить каждый день в 12:00 по МСК.')
 
-    const job = new CronJob('48 15 * * *', function() {
+    const job = new CronJob('00 12 * * *', function() {
       photoDay.fetchPhotoDay(ctx)
     }, null, true, 'Europe/Moscow');
 
@@ -52,7 +52,7 @@ bot.command('/photo_day_stop', (ctx: any) => {
     isStartPhotoDay = false
     ctx.reply('Теперь фото дня НЕ будет приходить каждый день.')
 
-    const job = new CronJob('48 15 * * *', function() {
+    const job = new CronJob('00 12 * * *', function() {
       photoDay.fetchPhotoDay(ctx)
     }, null, true, 'Europe/Moscow');
 
