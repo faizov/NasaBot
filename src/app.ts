@@ -14,6 +14,8 @@ const bot = new Telegraf(token)
 const photoDay = require('./photoDay');
 const photoMars = require('./photoMars');
 
+let isStartPhotoDay = false
+
 bot.start((ctx: any) => {
   ctx.reply(
     'Здравствуйте ' + ctx.from.first_name + '! \n\nНа данный момент бот находится в разработке, на данный момент реализовано получаение фото дня и получение фотографий Марса с марсохода Curiosity \n\n\nСписок команд: \n\n/photo_day - Фото дня\n\n/mars - Случайная фотография из Марса'
@@ -31,23 +33,35 @@ bot.command('/mars', async (ctx: any) => {
 });
 
 bot.command('/photo_day_start', (ctx: any) => {
-  ctx.reply('Теперь фото дня будет приходить каждый день в 12:00')
-  const job = new CronJob('00 12 * * *', function() {
-    photoDay.fetchPhotoDay(ctx)
-  }, null, true, 'Europe/Moscow');
+  if (!isStartPhotoDay) {
+    isStartPhotoDay= true
+    ctx.reply('Теперь фото дня будет приходить каждый день в 12:00 по МСК.')
 
-  job.start();
+    const job = new CronJob('48 15 * * *', function() {
+      photoDay.fetchPhotoDay(ctx)
+    }, null, true, 'Europe/Moscow');
+
+    job.start();
+  } else {
+    ctx.reply('Данная команда уже включена!')
+  }
 });
 
 bot.command('/photo_day_stop', (ctx: any) => {
-  ctx.reply('Теперь фото дня НЕ будет приходить каждый день в 12:00')
-  const job = new CronJob('40 19 * * *', function() {
-    photoDay.fetchPhotoDay(ctx)
-  }, null, true, 'Europe/Moscow');
+  if (isStartPhotoDay) {
+    isStartPhotoDay = false
+    ctx.reply('Теперь фото дня НЕ будет приходить каждый день.')
 
-  job.stop();
+    const job = new CronJob('48 15 * * *', function() {
+      photoDay.fetchPhotoDay(ctx)
+    }, null, true, 'Europe/Moscow');
+
+    job.stop();
+  } else {
+    ctx.reply('Данная команда уже выключена!')
+  }
+
 });
-
 
 bot.launch();
 
