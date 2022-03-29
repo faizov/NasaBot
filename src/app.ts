@@ -1,8 +1,6 @@
 require('dotenv').config()
 const { Telegraf } = require('telegraf')
 
-var CronJob = require('cron').CronJob;
-
 const express = require('express')
 const app = express()
 var port = process.env.PORT || 8080;
@@ -16,6 +14,7 @@ const dbFirebase = require('./firebase')
 
 const photoDay = require('./photoDay');
 const photoMars = require('./photoMars');
+const photoDayCommand = require('./startPhotoDay')
 
 type TChat = {
   chatId: number;
@@ -72,24 +71,14 @@ bot.command('/photo_day_start', async (ctx: any) => {
   const dataChat = await chatRef.get();
   const isStartPhotoDay = dataChat.exists ? dataChat.data()?.isStartPhotoDay : false
   
-  if(!dataChat.exists) {
+  if (!dataChat.exists) {
     initUser(ctx)
     await chatRef.set({isStartPhotoDay: true}, { merge: true });
   }
   
   await chatRef.set({isStartPhotoDay: true}, { merge: true });
-
-  if (!isStartPhotoDay) {
-    ctx.reply('Теперь фото дня будет приходить каждый день в 12:00 по МСК.')
-
-    const job = new CronJob('00 12 * * *', function() {
-      photoDay.fetchPhotoDay(ctx)
-    }, null, true, 'Europe/Moscow');
-
-    job.start();
-  } else {
-    ctx.reply('Данная команда уже включена!')
-  }
+  photoDayCommand.photoDayStart(ctx, isStartPhotoDay)
+  
 });
 
 bot.command('/photo_day_stop', async (ctx: any) => {
@@ -97,24 +86,13 @@ bot.command('/photo_day_stop', async (ctx: any) => {
   const dataChat = await chatRef.get();
   const isStartPhotoDay = dataChat.exists ? dataChat.data()?.isStartPhotoDay : false
   
-  if(!dataChat.exists) {
+  if (!dataChat.exists) {
     initUser(ctx)
     await chatRef.set({isStartPhotoDay: false}, { merge: true });
   }
   
   await chatRef.set({isStartPhotoDay: false}, { merge: true });
-
-  if (isStartPhotoDay) {
-    ctx.reply('Теперь фото дня НЕ будет приходить каждый день.')
-
-    const job = new CronJob('00 12 * * *', function() {
-      photoDay.fetchPhotoDay(ctx)
-    }, null, true, 'Europe/Moscow');
-
-    job.stop();
-  } else {
-    ctx.reply('Данная команда уже выключена!')
-  }
+  photoDayCommand.photoDayStop(ctx, isStartPhotoDay)
 
 });
 
