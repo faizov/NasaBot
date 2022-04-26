@@ -14,7 +14,6 @@ const bot = new Telegraf(token)
 const dbFirebase = require('./firebase')
 const photoDay = require('./photoDay');
 const photoMars = require('./photoMars');
-const photoDayCommand = require('./startPhotoDay')
 
 type TChat = {
   chatId: number;
