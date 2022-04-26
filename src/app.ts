@@ -1,5 +1,6 @@
 require('dotenv').config()
-const { Telegraf } = require('telegraf')
+const { Context, session, Telegraf } = require('telegraf')
+var CronJob = require('cron').CronJob;
 
 const express = require('express')
 const app = express()
@@ -11,7 +12,6 @@ const token: string = process.env.BOT_TOKEN as string;
 const bot = new Telegraf(token)
 
 const dbFirebase = require('./firebase')
-
 const photoDay = require('./photoDay');
 const photoMars = require('./photoMars');
 const photoDayCommand = require('./startPhotoDay')
@@ -48,9 +48,8 @@ const initUser = async (ctx: any) => {
 
 bot.start( async (ctx: any) => {
   initUser(ctx)
-
   ctx.reply(
-    'Здравствуйте ' + ctx.from.first_name + `! \n\nНа данный момент бот находится в разработке, на данный момент реализовано получаение фото дня и получение фотографий Марса с марсохода Curiosity \n\n\nСписок команд: \n\n/photo_day - Фото дня\n\n/mars - Случайная фотография из Марса`
+    'Здравствуйте ' + ctx.from.first_name + `! \n\nНа данный момент бот находится в разработке. Реализовано получаение "Фото дня" и получение фотографий Марса с марсохода Curiosity \n\n\nСписок команд: \n\n/photo_day - Фото дня\n\n/mars - Случайная фотография из Марса\n\nГ****код: github.com/faizov/NasaBot`
   );
 });
 
@@ -77,8 +76,12 @@ bot.command('/photo_day_start', async (ctx: any) => {
   }
   
   await chatRef.set({isStartPhotoDay: true}, { merge: true });
-  photoDayCommand.photoDayStart(ctx, isStartPhotoDay)
-  
+
+  if (!isStartPhotoDay) {
+    ctx.reply('Теперь фото дня будет приходить каждый день в 12:00 по МСК.')
+  } else {
+    ctx.reply('Данная команда уже включена!')
+  }
 });
 
 bot.command('/photo_day_stop', async (ctx: any) => {
@@ -92,9 +95,39 @@ bot.command('/photo_day_stop', async (ctx: any) => {
   }
   
   await chatRef.set({isStartPhotoDay: false}, { merge: true });
-  photoDayCommand.photoDayStop(ctx, isStartPhotoDay)
 
+  if (!isStartPhotoDay) {
+    ctx.reply('Теперь фото дня НЕ будет приходить каждый день.')
+  } else {
+    ctx.reply('Данная команда уже выключена!')
+  }
 });
+
+const cronPhotoDay = async () => {
+  const snapshot = await dbFirebase.chatFirebase.get();
+  let chats: number[]  = [];
+
+  snapshot.forEach((doc: any) => {
+    const isStartPhotoDay = doc.data().isStartPhotoDay
+    const chatId = doc.data().chatId
+
+    if (isStartPhotoDay) {
+      chats.push(chatId)
+    }
+  });
+
+  chats.forEach((item) => {
+    const job = new CronJob('00 12 * * *', function() {
+      photoDay.cronFetchPhotoDay(bot, item)
+    }, null, true, 'Europe/Moscow');
+    job.start();
+  });
+}
+
+const job = new CronJob('00 00 * * *', function() {
+  cronPhotoDay()
+}, null, true, 'Europe/Moscow');
+job.start();
 
 bot.launch();
 
