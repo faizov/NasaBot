@@ -123,10 +123,7 @@ const cronPhotoDay = async () => {
   });
 }
 
-const job = new CronJob('00 00 * * *', function() {
-  cronPhotoDay()
-}, null, true, 'Europe/Moscow');
-job.start();
+cronPhotoDay()
 
 bot.launch();
 
