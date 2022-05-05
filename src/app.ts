@@ -57,7 +57,7 @@ bot.start( async (ctx: any) => {
     );
   } else {
     ctx.reply(
-      'Здравствуйте ' + ctx.from.first_name + `! \n\nНа данный момент бот находится в разработке.\n\nСписок команд: \n\n/photo_day - Фото дня\n\n/mars - Случайная фотография из Марса\n\n/photo_day_start - Ежедневная рассылка "Фото дня" в 12 по Мск\n\n/photo_day_stop - Отключить рассылку \n\nГ****код: github.com/faizov/NasaBot`
+      'Hello ' + ctx.from.first_name + `! \n\nThe bot is currently under development.\n\nCommand List: \n\n/photo_day - Astronomy Picture of the Day\n\n/mars - Random photo from Mars\n\n/photo_day_start - Daily newsletter Picture of the day at 12 noon Moscow time\n\n/photo_day_stop - Disable Newsletter \n\nChannel Astronomy Picture of the Day: @nasa_channel_bot\n\ngithub.com/faizov/NasaBot`
     );
   }
 });
@@ -69,7 +69,7 @@ bot.command('/photo_day', (ctx: any) => {
 
 bot.command('/mars', async (ctx: any) => {
   initUser(ctx)
-  const startMessage = await ctx.reply('Начинаем искать классную фоточку...')
+  const startMessage = await ctx.reply(' Let`s start looking...')
 
   photoMars.fetchMarsPhoto(ctx, startMessage.message_id);
 });
@@ -87,9 +87,9 @@ bot.command('/photo_day_start', async (ctx: any) => {
   await chatRef.set({isStartPhotoDay: true}, { merge: true });
 
   if (!isStartPhotoDay) {
-    ctx.reply('Теперь фото дня будет приходить каждый день в 12:00 по МСК.')
+    ctx.reply('Now the photo of the day will come every day at 12:00 Moscow time.')
   } else {
-    ctx.reply('Данная команда уже включена!')
+    ctx.reply('This command is already enabled!')
   }
 });
 
@@ -106,9 +106,9 @@ bot.command('/photo_day_stop', async (ctx: any) => {
   await chatRef.set({isStartPhotoDay: false}, { merge: true });
 
   if (!isStartPhotoDay) {
-    ctx.reply('Теперь фото дня НЕ будет приходить каждый день.')
+    ctx.reply('This command is already disabled!')
   } else {
-    ctx.reply('Данная команда уже выключена!')
+    ctx.reply('The photo of the day will NOT come every day.')
   }
 });
 
