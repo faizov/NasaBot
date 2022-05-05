@@ -47,9 +47,19 @@ const initUser = async (ctx: any) => {
 
 bot.start( async (ctx: any) => {
   initUser(ctx)
-  ctx.reply(
-    'Здравствуйте ' + ctx.from.first_name + `! \n\nНа данный момент бот находится в разработке. Реализовано получаение "Фото дня" и получение фотографий Марса с марсохода Curiosity \n\n\nСписок команд: \n\n/photo_day - Фото дня\n\n/mars - Случайная фотография из Марса\n\nГ****код: github.com/faizov/NasaBot`
-  );
+  const usersRef = await dbFirebase.statsFirebase.doc(`users`)
+  const dataChat = await usersRef.get();
+  const users = dataChat.data().count
+
+  if (ctx.from.id == process.env.ID_ADMIN) {
+    ctx.reply(
+      `Users: ${users}`
+    );
+  } else {
+    ctx.reply(
+      'Здравствуйте ' + ctx.from.first_name + `! \n\nНа данный момент бот находится в разработке.\n\nСписок команд: \n\n/photo_day - Фото дня\n\n/mars - Случайная фотография из Марса\n\n/photo_day_start - Ежедневная рассылка "Фото дня" в 12 по Мск\n\n/photo_day_stop - Отключить рассылку \n\nГ****код: github.com/faizov/NasaBot`
+    );
+  }
 });
 
 bot.command('/photo_day', (ctx: any) => {

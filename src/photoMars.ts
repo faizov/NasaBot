@@ -4,6 +4,7 @@ const probe = require('probe-image-size');
 type TMars = {
     img_src: string;
     earth_date: string;
+    sol: number;
 };
 
 const fetchMarsPhoto = (ctx: any, id: number) => {
@@ -22,13 +23,17 @@ const fetchMarsPhoto = (ctx: any, id: number) => {
                     const obj: TMars = {
                         img_src: randomPhoto.img_src,
                         earth_date: randomPhoto.earth_date,
+                        sol: randomPhoto.sol
                     }
                     const result = await probe(obj.img_src);
                     if (obj.img_src && (result.width && result.height) > 600) {
                         ctx.deleteMessage(id)
                         ctx.replyWithPhoto(
                             {url: obj.img_src}, 
-                            {caption: obj.earth_date}
+                            {
+                                parse_mode: 'markdown',
+                                caption: `*Earth date:* ${obj.earth_date} \n*Sol:* ${obj.sol}`
+                            }
                         )
                     } else {
                         fetchMarsPhoto(ctx, id)
@@ -44,9 +49,9 @@ const fetchMarsPhoto = (ctx: any, id: number) => {
                 fetchMarsPhoto(ctx, id)
             })
         }
-        }).
-        catch((error: any) => {
-            ctx.reply(error)
+        })
+        .catch((error: any) => {
+            ctx.telegram.sendMessage(process.env.ID_ADMIN, `Error fetchMars ${error}`)
         }
     );
 }

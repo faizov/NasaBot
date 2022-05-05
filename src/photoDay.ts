@@ -21,19 +21,19 @@ const fetchPhotoDay =  (ctx: any) => {
               hdurl: data.hdurl,
             }
     
-            // const explanationShort = obj?.explanation.length <= 800 ? obj.explanation : ''
-            // \n\n${explanationShort}
+            const explanationShort = obj?.explanation.length <= 800 ? obj.explanation : ''
             const opts = {
-              'caption': `*${obj.title}* \n\n[Full photo](${data.hdurl})`,
+              'caption': `*${obj.title}* \n\n[Full photo](${data.hdurl}) \n\n${explanationShort}`,
               'parse_mode': 'markdown'
             };
     
             ctx.replyWithPhoto({url: obj.url}, opts)
           });  
         }
-    }).
-    catch((error: any) => {
-        ctx.reply(error)
+    })
+    .catch((error: any) => {
+      console.log('error ', error)
+      ctx.telegram.sendMessage(process.env.ID_ADMIN, `Error fetchPhotoDay ${error}`)
     });
 }
 
@@ -48,14 +48,7 @@ const cronFetchPhotoDay = (bot: any, chatId: number[]) => {
           url: data.url,
           hdurl: data.hdurl,
         }
-
-        // const explanationShort = obj?.explanation.length <= 800 ? obj.explanation : ''
-        // \n\n${explanationShort}
-        const opts = {
-          'caption': `*${obj.title}* \n\n[Full photo](${data.hdurl})`,
-          'parse_mode': 'markdown'
-        };
-
+        
         bot.telegram.sendPhoto(
           chatId, 
           obj.url, 
