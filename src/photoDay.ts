@@ -48,14 +48,17 @@ const cronFetchPhotoDay = (bot: any, chatId: number[]) => {
           url: data.url,
           hdurl: data.hdurl,
         }
-        
+
+        const explanationShort = obj?.explanation.length <= 800 ? obj.explanation : ''
+        const opts = {
+          'caption': `*${obj.title}* \n\n[Full photo](${data.hdurl}) \n\n${explanationShort}`,
+          'parse_mode': 'markdown'
+        };
+
         bot.telegram.sendPhoto(
           chatId, 
           obj.url, 
-          { 
-            parse_mode: 'markdown', 
-            caption: `*${obj.title}* \n\n[Full photo](${data.hdurl})` 
-          }
+          opts
           );
       });  
     }
