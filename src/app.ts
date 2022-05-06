@@ -114,7 +114,8 @@ bot.command('/photo_day_stop', async (ctx: any) => {
 
 const cronPhotoDay = async () => {
   const snapshot = await dbFirebase.chatFirebase.get();
-  let chats: number[]  = [];
+  const channels = -1001529487393;
+  let chats: number[]  = [ channels ];
 
   snapshot.forEach((doc: any) => {
     const isStartPhotoDay = doc.data().isStartPhotoDay

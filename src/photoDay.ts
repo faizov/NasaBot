@@ -21,7 +21,7 @@ const fetchPhotoDay =  (ctx: any) => {
               hdurl: data.hdurl,
             }
     
-            const explanationShort = obj?.explanation.length <= 800 ? obj.explanation : ''
+            const explanationShort = obj.title.length + data?.explanation.length <= 1012 ? obj.explanation : ''
             const opts = {
               'caption': `*${obj.title}* \n\n[Full photo](${data.hdurl}) \n\n${explanationShort}`,
               'parse_mode': 'markdown'
@@ -49,7 +49,7 @@ const cronFetchPhotoDay = (bot: any, chatId: number[]) => {
           hdurl: data.hdurl,
         }
 
-        const explanationShort = obj?.explanation.length <= 800 ? obj.explanation : ''
+        const explanationShort = obj.title.length + data?.explanation.length <= 1012 ? obj.explanation : ''
         const opts = {
           'caption': `*${obj.title}* \n\n[Full photo](${data.hdurl}) \n\n${explanationShort}`,
           'parse_mode': 'markdown'
