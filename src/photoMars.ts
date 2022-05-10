@@ -15,7 +15,7 @@ const fetchMarsPhoto = (ctx: any, id: number) => {
     const photoMarsUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${intervalYear}-${intervalMonth}-${intervalDay}&camera=MAST&api_key=` + process.env.API_KEY;
 
     fetchMars(photoMarsUrl)
-        .then((response: any) => {
+    .then((response: any) => {
         if (response.ok) {
             response.json().then( async (data: any) => {
                 if (data.photos.length > 0) {
@@ -49,11 +49,10 @@ const fetchMarsPhoto = (ctx: any, id: number) => {
                 fetchMarsPhoto(ctx, id)
             })
         }
-        })
-        .catch((error: any) => {
-            ctx.telegram.sendMessage(process.env.ID_ADMIN, `Error fetchMars ${error}`)
-        }
-    );
+    })
+    .catch((error: any) => {
+        ctx.telegram.sendMessage(process.env.ID_ADMIN, `Error fetchMars ${error}`)
+    })
 }
 
 exports.fetchMarsPhoto = fetchMarsPhoto;
