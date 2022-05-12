@@ -1,5 +1,5 @@
 # NasaBot
-Телеграм бот NASA. На данный момент используется Heroku и Firebase.
+Телеграм бот NASA. На данный момент используется Firebase, бот лежит на vps сервере.
 ## API:
 https://api.nasa.gov
 ## Реализовано:
