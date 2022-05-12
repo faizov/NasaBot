@@ -1,3 +1,4 @@
+var { Markup } = require('telegraf')
 const fetchMars = require('node-fetch');
 const probe = require('probe-image-size');
 
@@ -32,7 +33,10 @@ const fetchMarsPhoto = (ctx: any, id: number) => {
                             {url: obj.img_src}, 
                             {
                                 parse_mode: 'markdown',
-                                caption: `*Earth date:* ${obj.earth_date} \n*Sol:* ${obj.sol}`
+                                caption: `*Earth date:* ${obj.earth_date} \n*Sol:* ${obj.sol}`,
+                                ...Markup.inlineKeyboard([
+                                    Markup.button.callback('Another random photo from Mars!', 'Random mars'),
+                                  ])
                             }
                         )
                     } else {
@@ -48,6 +52,8 @@ const fetchMarsPhoto = (ctx: any, id: number) => {
                 console.log(`error`, error)
                 fetchMarsPhoto(ctx, id)
             })
+        } else {
+            fetchMarsPhoto(ctx, id)
         }
     })
     .catch((error: any) => {

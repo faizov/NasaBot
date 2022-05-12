@@ -62,9 +62,21 @@ bot.start( async (ctx: any) => {
   }
 });
 
+bot.action('Random apod', (ctx: any) => photoDay.fetchRandomPhotoDay(ctx))
+
+bot.action('Random mars', async (ctx: any) => {
+  const startMessage = await ctx.reply(' Let`s start looking...')
+  photoMars.fetchMarsPhoto(ctx, startMessage.message_id)
+})
+
 bot.command('/photo_day', (ctx: any) => {
   initUser(ctx)
   photoDay.fetchPhotoDay(ctx)
+});
+
+bot.command('/random_apod', (ctx: any) => {
+  initUser(ctx)
+  photoDay.fetchRandomPhotoDay(ctx)
 });
 
 bot.command('/mars', async (ctx: any) => {
