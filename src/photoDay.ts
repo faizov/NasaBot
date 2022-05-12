@@ -48,7 +48,7 @@ const fetchPhotoDay = (ctx: any) => {
 }
 
 const fetchRandomPhotoDay = (ctx: any) => {
-  let intervalYear = Math.floor(Math.random() * (new Date().getFullYear() - 2013)) + 1995;
+  let intervalYear = Math.floor(Math.random() * (new Date().getFullYear() - 1995) + 1995);
   let intervalMonth  = Math.floor(Math.random() * (12 - 1)) + 1;
   let intervalDay  = Math.floor(Math.random() * (31 - 1)) + 1;
   const date = new Date(intervalYear, intervalMonth, intervalDay)
