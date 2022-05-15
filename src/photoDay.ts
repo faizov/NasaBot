@@ -6,6 +6,7 @@ type TDay = {
     explanation: string;
     url: string;
     hdurl?: string;
+    copyright?: string;
     media_type: string;
     date: string;
 };
@@ -17,24 +18,34 @@ const fetchPhotoDay = (ctx: any) => {
     .then((response: any) => {
         if (response.ok) {
           response.json().then((data: any) => {
+            console.log('data', data)
             const obj: TDay = {
               title: data.title,
               explanation: data.explanation,
               media_type: data.media_type,
               url: data.url,
               hdurl: data.hdurl,
-              date: data.date
+              date: data.date,
+              copyright: data.copyright
             }
 
+            const date = obj.date.split('-')
+            const year = date[0].slice(-2)
+            const month = date[1]
+            const day = date[2]
+
+
             const explanationShort = obj.title.length + obj?.explanation.length <= 1012 ? obj.explanation : ''
+            let copyright = `${obj.copyright ? `\n\nCopyright: ${obj.copyright}` : ''}`
+            let linkPage = `[Explanation](https://apod.nasa.gov/apod/ap${year}${month}${day}.html)`
             
             let opts = {
-              'caption': `*${obj.title}* \n\n[Full Source](${obj.hdurl})`,
+              'caption': `*${obj.title}*${copyright}\n\n${linkPage} | [Full Source](${obj.hdurl})`,
               'parse_mode': 'markdown'
             };
 
             if (obj.media_type === 'video') {
-              opts.caption = `*Video: ${obj.title}* \n\n[Full Video](${obj.url})`
+              opts.caption = `*Video: ${obj.title}*${copyright}\n\n[Full Video](${obj.url})`
             }
             
             ctx.replyWithPhoto(obj.url, opts)
@@ -68,7 +79,8 @@ const fetchRandomPhotoDay = (ctx: any) => {
             media_type: data.media_type,
             url: data.url,
             hdurl: data.hdurl,
-            date: data.date
+            date: data.date,
+            copyright: data.copyright
           }
 
           const explanationShort = obj.title.length + obj?.explanation.length <= 970 ? `${obj.explanation}\n\n` : `[Explanation](https://apod.nasa.gov/apod/ap${year}${month}${day}.html) | `
@@ -109,18 +121,25 @@ const cronFetchPhotoDay = (bot: any, chatId: number[]) => {
           url: data.url,
           hdurl: data.hdurl,
           media_type: data.media_type,
-          date: data.date
+          date: data.date,
+          copyright: data.copyright
         }
+        const date = obj.date.split('-')
+        const year = date[0].slice(-2)
+        const month = date[1]
+        const day = date[2]
 
         const explanationShort = obj.title.length + data?.explanation.length <= 1012 ? obj.explanation : ''
+        let copyright = `${obj.copyright ? `\n\nCopyright: ${obj.copyright}` : ''}`
+        let linkPage = `[Explanation](https://apod.nasa.gov/apod/ap${year}${month}${day}.html)`
         
         let opts = {
-          'caption': `*${obj.title}* \n\n[Full Source](${obj.hdurl})`,
+          'caption': `*${obj.title}*${copyright}\n\n${linkPage} | [Full Source](${obj.hdurl})`,
           'parse_mode': 'markdown'
         };
 
         if (obj.media_type === 'video') {
-          opts.caption = `*Video: ${obj.title}* \n\n[Full Video](${obj.url})`
+          opts.caption = `*Video: ${obj.title}*${copyright}\n\n[Full Video](${obj.url})`
         }
 
         bot.telegram.sendPhoto(
