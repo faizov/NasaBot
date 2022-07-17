@@ -19,3 +19,6 @@ https://api.nasa.gov
 - Обработка ошибок на все случаи.
 - Хранение фотографий отдельно в случае недоступности api.
 - Новые запросы по api Nasa.
+
+<img width="414" alt="Снимок экрана 2022-07-17 в 20 15 04" src="https://user-images.githubusercontent.com/43875549/179419096-bca19b06-d3f3-44f8-b47d-2ca336dab166.png">
+<img width="398" alt="Снимок экрана 2022-07-17 в 20 13 21" src="https://user-images.githubusercontent.com/43875549/179419100-abb6c4ae-6cbc-4e9d-8653-b36e63b6f480.png">
