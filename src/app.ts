@@ -62,7 +62,7 @@ bot.start( async (ctx: any) => {
   }
 });
 
-bot.action('Random apod', (ctx: any) => photoDay.fetchRandomPhotoDay(ctx))
+bot.action('Random apod', (ctx: any) => photoDay.sendRandomApod(ctx))
 
 bot.action('Random mars', async (ctx: any) => {
   const startMessage = await ctx.reply(' Let`s start looking...')
@@ -71,12 +71,12 @@ bot.action('Random mars', async (ctx: any) => {
 
 bot.command('/photo_day', (ctx: any) => {
   initUser(ctx)
-  photoDay.fetchPhotoDay(ctx)
+  photoDay.sendApod(ctx)
 });
 
 bot.command('/random_apod', (ctx: any) => {
   initUser(ctx)
-  photoDay.fetchRandomPhotoDay(ctx)
+  photoDay.sendRandomApod(ctx)
 });
 
 bot.command('/mars', async (ctx: any) => {
@@ -138,16 +138,16 @@ const cronPhotoDay = async () => {
     }
   });
 
+  const apod  = await photoDay.fetchApod()
   chats.forEach((item) => {
     const job = new CronJob('00 12 * * *', function() {
-      photoDay.cronFetchPhotoDay(bot, item)
+      photoDay.cronSendApod(bot, apod, item)
     }, null, true, 'Europe/Moscow');
     job.start();
   });
 }
 
 cronPhotoDay()
-
 bot.launch();
 
 // Enable graceful stop
