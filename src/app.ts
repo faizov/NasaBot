@@ -140,14 +140,15 @@ const cronPhotoDay = async () => {
 
   const apod  = await photoDay.fetchApod()
   chats.forEach((item) => {
-    const job = new CronJob('00 12 * * *', function() {
-      photoDay.cronSendApod(bot, apod, item)
-    }, null, true, 'Europe/Moscow');
-    job.start();
+    photoDay.cronSendApod(bot, apod, item)
   });
 }
 
-cronPhotoDay()
+const job = new CronJob('00 12 * * *', function() {
+  cronPhotoDay()
+}, null, true, 'Europe/Moscow');
+
+job.start();
 bot.launch();
 
 // Enable graceful stop

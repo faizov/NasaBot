@@ -124,4 +124,4 @@ const cronSendApod = (bot: any, apod: TDay, chatId: number[]) => {
 exports.fetchApod = fetchApod;
 exports.sendApod = sendApod;
 exports.sendRandomApod = sendRandomApod;
-exports.cronFetchPhotoDay = cronSendApod;
+exports.cronSendApod = cronSendApod;
