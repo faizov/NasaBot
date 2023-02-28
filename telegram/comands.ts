@@ -126,6 +126,7 @@ export const randomApodCommand = async (
     }
   }
 
+  // TODO Add error handler
   // if (apod && apod.error) {
   //   ctx.reply(apod.error.message);
   // }

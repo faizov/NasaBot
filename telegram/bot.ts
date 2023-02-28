@@ -47,10 +47,17 @@ bot.callbackQuery(
 bot.callbackQuery(
   "click-random-mars",
   async (ctx: CallbackQueryContext<Context>) => {
-    await ctx.answerCallbackQuery({
-      text: "Let's find a nice photo!",
-    });
-    await randomMarsCommand(ctx);
+    try {
+      await ctx.answerCallbackQuery({
+        text: "Let's find a nice photo!",
+      });
+      await randomMarsCommand(ctx);
+    } catch (error) {
+      await ctx.answerCallbackQuery({
+        text: `Error!`,
+      });
+      console.log("error", error);
+    }
   }
 );
 
