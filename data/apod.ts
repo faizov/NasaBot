@@ -9,6 +9,7 @@ const apodUrl =
 
 export const fetchApod = async () => {
   const apod = await fetch(apodUrl).then((res) => res.json());
+
   try {
     return apod as TApod;
   } catch (error) {

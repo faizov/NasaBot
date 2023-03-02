@@ -1,4 +1,5 @@
 import { Bot, CallbackQueryContext, Context } from "grammy";
+import { run } from "@grammyjs/runner";
 import { config } from "dotenv";
 
 import {
@@ -9,6 +10,7 @@ import {
   removeUser,
   startCommand,
 } from "./comands";
+import { cronApod } from "./cron";
 
 config();
 
@@ -61,4 +63,9 @@ bot.callbackQuery(
   }
 );
 
-bot.start();
+
+
+cronApod(bot.api);
+
+// bot.start();
+run(bot);

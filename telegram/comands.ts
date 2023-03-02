@@ -8,6 +8,8 @@ import {
   GrammyError,
   InlineKeyboard,
 } from "grammy";
+import fetch from "node-fetch";
+
 import { Chat } from "grammy/out/types.node";
 
 import { chatsDb, statsDb } from "./firebase";
@@ -65,6 +67,11 @@ export const apodCommand = async (ctx: CommandContext<Context>) => {
 
   if (apod) {
     const { title, explanation, hdurl, url, copyright, date } = apod;
+
+    // CHECK size image
+    // const response = hdurl ? await fetch(hdurl) : undefined;
+    // const buffer = response ? await response.buffer() : undefined;
+    // const size = buffer && buffer.byteLength;
 
     const message = `<b><a href="${
       hdurl || url
