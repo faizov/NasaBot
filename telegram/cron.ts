@@ -3,6 +3,7 @@ import schedule from "node-schedule";
 import { fetchApod, fetchRandomApod } from "../data/apod";
 
 import fetch from "node-fetch";
+import { fetchRandomMars } from "../data/mars";
 
 const sendPhotoToChats = async (
   bot: Api,
@@ -49,18 +50,20 @@ export const cronApod = (bot: Api) => {
       if (apod) {
         const { title, explanation, hdurl, url, copyright, date } = apod[0];
 
-        const imageUrl = hdurl ? hdurl : url;
-
+        // CHECK size image
         const response = hdurl ? await fetch(hdurl) : undefined;
         const buffer = response ? await response.buffer() : undefined;
         const size = buffer && buffer.byteLength;
 
-        const message = `<b><a href="${imageUrl}">${title}</a></b> \n \n<i>${date}</i> \n \n${explanation} \n \n${
+        const imageUrl = size && size <= 130000 ? hdurl : url;
+        const titlePost = title ? title : url;
+
+        const message = `<b><a href="${imageUrl}">${titlePost}</a></b> \n \n<i>${date}</i> \n \n${explanation} \n \n${
           copyright ? `<b>Copyright:</b> ${copyright}` : " "
         } `;
 
         if (!hdurl || !buffer || !size) {
-          console.log('apod', apod)
+          console.log("apod", apod);
           throw new Error("Unable to fetch image data");
         }
 
@@ -68,6 +71,18 @@ export const cronApod = (bot: Api) => {
       }
     } catch (error) {
       console.log("Error sending NASA APOD:", error);
+    }
+  });
+};
+
+export const cronMars = async (bot: Api) => {
+  schedule.scheduleJob("*/1 * * * *", async () => {
+    const marsPhoto = await fetchRandomMars();
+    if (marsPhoto) {
+      await bot.sendPhoto(-1001761889046, marsPhoto.img_src, {
+        caption: `Earth date: ${marsPhoto.earth_date}\nSol: ${marsPhoto.sol}`,
+        parse_mode: "HTML",
+      });
     }
   });
 };

@@ -10,7 +10,7 @@ import {
   removeUser,
   startCommand,
 } from "./comands";
-import { cronApod } from "./cron";
+import { cronApod, cronMars } from "./cron";
 
 config();
 
@@ -66,6 +66,7 @@ bot.callbackQuery(
 
 
 cronApod(bot.api);
+cronMars(bot.api)
 
 // bot.start();
 run(bot);

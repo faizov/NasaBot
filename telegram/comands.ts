@@ -133,10 +133,9 @@ export const randomApodCommand = async (
     }
   }
 
-  // TODO Add error handler
-  // if (apod && apod.error) {
-  //   ctx.reply(apod.error.message);
-  // }
+  if (apod && apod[0].error) {
+    ctx.reply(apod[0].error.message);
+  }
 };
 
 export const randomMarsCommand = async (
