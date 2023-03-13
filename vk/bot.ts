@@ -13,26 +13,29 @@ const vk = new VK({
 schedule.scheduleJob("*/1 * * * *", async () => {
   const marsPhoto = await fetchRandomMars();
   console.log("marsPhoto", marsPhoto);
-  const photo = await vk.upload.wallPhoto({
-    source: {
-      value: marsPhoto.img_src,
-    },
-  });
 
-  try {
-    vk.api.wall
-      .post({
-        owner_id: -Number(process.env.GROUP_ID),
-        message: `Earth date: ${marsPhoto.earth_date}\nSol: ${marsPhoto.sol}`,
-        attachments: `photo${photo.ownerId}_${photo.id}`,
-      })
-      .then((response) => {
-        console.log("Запись успешно опубликована:", response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  } catch (error) {
-    console.log("error", error);
+  if (marsPhoto) {
+    const photo = await vk.upload.wallPhoto({
+      source: {
+        value: marsPhoto.img_src,
+      },
+    });
+
+    try {
+      vk.api.wall
+        .post({
+          owner_id: -Number(process.env.GROUP_ID),
+          message: `Earth date: ${marsPhoto.earth_date}\nSol: ${marsPhoto.sol}`,
+          attachments: `photo${photo.ownerId}_${photo.id}`,
+        })
+        .then((response) => {
+          console.log("Запись успешно опубликована:", response);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.log("error", error);
+    }
   }
 });

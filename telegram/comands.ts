@@ -150,7 +150,6 @@ export const randomMarsCommand = async (
 
   try {
     if (mars) {
-      console.log("mars", mars);
       ctx.replyWithPhoto(mars.img_src, {
         caption: `<b>Earth date: ${mars.earth_date}</b>\n<b>Sol: ${mars.sol}</b>`,
         parse_mode: "HTML",

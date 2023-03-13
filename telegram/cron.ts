@@ -1,6 +1,7 @@
 import { Api, GrammyError } from "grammy";
 import schedule from "node-schedule";
 import { fetchApod, fetchRandomApod } from "../data/apod";
+import { chatsDb } from "./firebase";
 
 import fetch from "node-fetch";
 import { fetchRandomMars } from "../data/mars";
@@ -9,11 +10,18 @@ const sendPhotoToChats = async (
   bot: Api,
   chatsId: number[],
   url: string,
-  message: string
+  message: string,
+  media: string
 ) => {
   try {
     for (let index = 0; index < chatsId.length; index++) {
       const id = chatsId[index];
+
+      if (media === "video") {
+        return await bot.sendMessage(id, message, {
+          parse_mode: "HTML",
+        });
+      }
 
       await bot.sendPhoto(id, url, {
         caption: message,
@@ -35,19 +43,18 @@ const sendPhotoToChats = async (
   }
 };
 
-export const cronApod = (bot: Api) => {
+export const cronApod = async (bot: Api) => {
   const hour = 10;
   const minute = 29;
   const scheduleTime = `${minute} ${hour} * * *`;
 
-  return schedule.scheduleJob("*/1 * * * *", async () => {
+  return schedule.scheduleJob("0 9 * * *", async () => {
     try {
       console.log("Start cron Apod");
       const apod = await fetchRandomApod();
 
-      const chatsId = [-666404832];
-
       if (apod) {
+        const chatsId = [-666404832];
         const { title, explanation, hdurl, url, copyright, date } = apod[0];
 
         // CHECK size image
@@ -67,7 +74,7 @@ export const cronApod = (bot: Api) => {
           throw new Error("Unable to fetch image data");
         }
 
-        await sendPhotoToChats(bot, chatsId, url, message);
+        await sendPhotoToChats(bot, chatsId, url, message, apod[0].media_type);
       }
     } catch (error) {
       console.log("Error sending NASA APOD:", error);

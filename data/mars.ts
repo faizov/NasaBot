@@ -1,6 +1,6 @@
-import fetch from "node-fetch";
+import fetch, { RequestInit } from "node-fetch";
 import { config } from "dotenv";
-import sizeOf from "image-size";
+import { checkImageColor } from "../utils/checkImage";
 
 import { TMars } from "../types";
 
@@ -25,42 +25,52 @@ function getRandomDate(): string {
   }-${randomDate.getDate()}`;
 }
 
-const getImageSize = async (imageUrl: string) => {
-  const response = await fetch(imageUrl);
-  const buffer = await response.buffer();
-  const dimensions = sizeOf(buffer);
-  return { width: dimensions.width, height: dimensions.height };
-};
-
 export const fetchRandomMars = async () => {
+  let page = 1;
+  let randomDate = getRandomDate();
+
   while (true) {
-    const randomDate = getRandomDate();
-    const photoMarsUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${randomDate}&camera=MAST&api_key=${process.env.API_KEY}`;
-    const mars = (await fetch(photoMarsUrl).then((res) =>
-      res.json()
-    )) as TMarsPhotos;
+    const photoMarsUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${randomDate}&page=${page}&camera=MAST&api_key=${process.env.API_KEY}`;
+    console.log("photoMarsUrl", photoMarsUrl);
+    const mars = (await fetch(photoMarsUrl, {
+      timeout: 5000,
+    } as RequestInit).then((res) => res.json())) as TMarsPhotos;
 
     try {
-      if (mars.photos.length === 0) {
+      console.log("mars.photos.length", mars.photos.length);
+      if (!mars || mars.photos.length === 0) {
         console.log(`No photos found for ${randomDate}, trying again...`);
         delay(2000);
+        randomDate = getRandomDate();
+        page = 1;
         continue;
-      }
+      } else {
+        const promises = mars.photos.map(async (marsObj) => {
+          const colorImg = await checkImageColor(marsObj.img_src);
 
-      for (const photo of mars.photos) {
-        const imageSize = await getImageSize(photo.img_src);
+          if (colorImg) {
+            return marsObj;
+          }
+        });
 
-        if (
-          imageSize.height &&
-          imageSize.width &&
-          imageSize.height > 300 &&
-          imageSize.width > 300
-        ) {
-          return photo;
+        const marsList = await Promise.all(promises).then((results) =>
+          results.filter((result) => result !== undefined)
+        );
+
+        const randomMars =
+          marsList[Math.floor(Math.random() * marsList.length)];
+
+        if (marsList.length === 0 || !randomMars) {
+          console.log("No photo found with the required size, trying again...");
+          page++;
+          delay(2000);
+          continue;
         }
-      }
 
-      console.log("No photo found with the required size, trying again...");
+        console.log("randomMars", randomMars);
+
+        return randomMars;
+      }
     } catch (error) {
       console.log("error", error);
     }

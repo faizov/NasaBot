@@ -66,7 +66,7 @@ bot.callbackQuery(
 
 
 cronApod(bot.api);
-cronMars(bot.api)
+// cronMars(bot.api)
 
 // bot.start();
 run(bot);
