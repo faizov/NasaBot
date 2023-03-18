@@ -10,7 +10,7 @@ const vk = new VK({
   token: process.env.VK_TOKEN || "",
 });
 
-schedule.scheduleJob("*/1 * * * *", async () => {
+schedule.scheduleJob("0 * * * *", async () => {
   const marsPhoto = await fetchRandomMars();
   console.log("marsPhoto", marsPhoto);
 

@@ -5,6 +5,8 @@ import { config } from "dotenv";
 import {
   apodCommand,
   initUser,
+  photoDayStart,
+  photoDayStop,
   randomApodCommand,
   randomMarsCommand,
   removeUser,
@@ -31,6 +33,10 @@ bot.on("my_chat_member", (ctx) => {
   }
 });
 
+// bot.on("message", (ctx) => {
+//   console.log("ctx", ctx.chat.id);
+// });
+
 bot.command("start", startCommand);
 
 bot.command("photo_day", apodCommand);
@@ -38,6 +44,10 @@ bot.command("photo_day", apodCommand);
 bot.command("random_apod", randomApodCommand);
 
 bot.command("random_mars", randomMarsCommand);
+
+bot.command("photo_day_start", photoDayStart);
+
+bot.command("photo_day_stop", photoDayStop);
 
 bot.callbackQuery(
   "click-random-apod",
@@ -62,8 +72,6 @@ bot.callbackQuery(
     }
   }
 );
-
-
 
 cronApod(bot.api);
 // cronMars(bot.api)

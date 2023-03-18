@@ -160,3 +160,41 @@ export const randomMarsCommand = async (
     console.log("error", error);
   }
 };
+
+export const photoDayStart = async (
+  ctx: CommandContext<Context> | CallbackQueryContext<Context>
+) => {
+  const chatRef = chatsDb.doc(`chat-${ctx.chat?.id}`);
+  const dataChat = await chatRef.get();
+  const isStartPhotoDay = dataChat.exists
+    ? dataChat.data()?.isStartPhotoDay
+    : false;
+  console.log("isStartPhotoDay", isStartPhotoDay);
+
+  await chatRef.set({ isStartPhotoDay: true }, { merge: true });
+  if (!isStartPhotoDay) {
+    ctx.reply(
+      "Now the photo of the day will come every day at 12:00 Moscow time."
+    );
+  } else {
+    ctx.reply("This command is already enabled!");
+  }
+};
+
+export const photoDayStop = async (
+  ctx: CommandContext<Context> | CallbackQueryContext<Context>
+) => {
+  const chatRef = chatsDb.doc(`chat-${ctx.chat?.id}`);
+  const dataChat = await chatRef.get();
+  const isStartPhotoDay = dataChat.exists
+    ? dataChat.data()?.isStartPhotoDay
+    : false;
+
+  await chatRef.set({ isStartPhotoDay: false }, { merge: true });
+
+  if (!isStartPhotoDay) {
+    ctx.reply("This command is already disabled!");
+  } else {
+    ctx.reply("The photo of the day will NOT come every day.");
+  }
+};

@@ -14,48 +14,59 @@ const sendPhotoToChats = async (
   media: string
 ) => {
   try {
-    for (let index = 0; index < chatsId.length; index++) {
-      const id = chatsId[index];
-
-      if (media === "video") {
-        return await bot.sendMessage(id, message, {
-          parse_mode: "HTML",
-        });
-      }
-
-      await bot.sendPhoto(id, url, {
-        caption: message,
-        parse_mode: "HTML",
-      });
-    }
-  } catch (error) {
-    if (error instanceof GrammyError) {
-      if (error.description === "Bad Request: message caption is too long") {
-        for (let index = 0; index < chatsId.length; index++) {
-          const id = chatsId[index];
-
-          await bot.sendMessage(id, message, {
+    chatsId.forEach(async (id) => {
+      try {
+        if (media === "video") {
+          return await bot.sendMessage(id, message, {
             parse_mode: "HTML",
           });
         }
+
+        await bot.sendPhoto(id, url, {
+          caption: message,
+          parse_mode: "HTML",
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    });
+  } catch (error) {
+    if (error instanceof GrammyError) {
+      if (error.description === "Bad Request: message caption is too long") {
+        chatsId.forEach(async (id) => {
+          try {
+            await bot.sendMessage(id, message, {
+              parse_mode: "HTML",
+            });
+          } catch (error) {
+            console.log("error", error);
+          }
+        });
       }
     }
   }
 };
 
 export const cronApod = async (bot: Api) => {
-  const hour = 10;
-  const minute = 29;
-  const scheduleTime = `${minute} ${hour} * * *`;
-
   return schedule.scheduleJob("0 9 * * *", async () => {
+    const snapshot = await chatsDb.get();
+    const channels = -1001529487393;
+    let chats: number[] = [channels];
+
+    snapshot.forEach((doc: any) => {
+      const isStartPhotoDay = doc.data().isStartPhotoDay;
+      const chatId = doc.data().chatId;
+      if (isStartPhotoDay && chatId) {
+        chats.push(chatId);
+      }
+    });
+
     try {
       console.log("Start cron Apod");
-      const apod = await fetchRandomApod();
+      const apod = await fetchApod();
 
       if (apod) {
-        const chatsId = [-666404832];
-        const { title, explanation, hdurl, url, copyright, date } = apod[0];
+        const { title, explanation, hdurl, url, copyright, date } = apod;
 
         // CHECK size image
         const response = hdurl ? await fetch(hdurl) : undefined;
@@ -74,7 +85,7 @@ export const cronApod = async (bot: Api) => {
           throw new Error("Unable to fetch image data");
         }
 
-        await sendPhotoToChats(bot, chatsId, url, message, apod[0].media_type);
+        await sendPhotoToChats(bot, chats, url, message, apod.media_type);
       }
     } catch (error) {
       console.log("Error sending NASA APOD:", error);
