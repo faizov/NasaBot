@@ -94,7 +94,7 @@ export const cronApod = async (bot: Api) => {
 };
 
 export const cronMars = async (bot: Api) => {
-  schedule.scheduleJob("*/1 * * * *", async () => {
+  schedule.scheduleJob("0 * * * *", async () => {
     const marsPhoto = await fetchRandomMars();
     if (marsPhoto) {
       await bot.sendPhoto(-1001761889046, marsPhoto.img_src, {

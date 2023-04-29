@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import { config } from "dotenv";
 import { TApod } from "../types";
+// import schedule from "node-schedule";
 
 config();
 
@@ -27,3 +28,16 @@ export const fetchRandomApod = async () => {
     console.log("eroor", error);
   }
 };
+
+// export const cronFetchRandomApod = async () => {
+//   const randomApodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}&count=1`;
+//   const apod = await fetch(randomApodUrl).then((res) => res.json());
+
+//   return schedule.scheduleJob("0 * * * *", async () => {
+//     try {
+//       return apod as TApod[];
+//     } catch (error) {
+//       console.log("eroor", error);
+//     }
+//   });
+// };
