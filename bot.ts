@@ -8,6 +8,7 @@ import {
   photoDayStart,
   photoDayStop,
   randomApodCommand,
+  dateApodCommand,
   randomMarsCommand,
   removeUser,
   startCommand,
@@ -33,15 +34,13 @@ bot.on("my_chat_member", (ctx) => {
   }
 });
 
-// bot.on("message", (ctx) => {
-//   console.log("ctx", ctx.chat.id);
-// });
-
 bot.command("start", startCommand);
 
 bot.command("photo_day", apodCommand);
 
 bot.command("random_apod", randomApodCommand);
+
+bot.command("date_apod", dateApodCommand);
 
 bot.command("random_mars", randomMarsCommand);
 

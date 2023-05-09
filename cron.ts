@@ -1,10 +1,10 @@
 import { Api, GrammyError } from "grammy";
 import schedule from "node-schedule";
-import { fetchApod, fetchRandomApod } from "../data/apod";
+import { fetchApod, fetchRandomApod } from "./data/apod";
 import { chatsDb } from "./firebase";
 
 import fetch from "node-fetch";
-import { fetchRandomMars } from "../data/mars";
+import { fetchRandomMars } from "./data/mars";
 
 const sendPhotoToChats = async (
   bot: Api,
@@ -48,7 +48,7 @@ const sendPhotoToChats = async (
 };
 
 export const cronApod = async (bot: Api) => {
-  return schedule.scheduleJob("0 9 * * *", async () => {
+  return schedule.scheduleJob("0 12 * * *", async () => {
     const snapshot = await chatsDb.get();
     const channels = -1001529487393;
     let chats: number[] = [channels];

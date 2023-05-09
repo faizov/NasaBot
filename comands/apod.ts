@@ -1,4 +1,4 @@
-import { fetchApod, fetchRandomApod } from "../../data/apod";
+import { fetchApod, fetchDateApod, fetchRandomApod } from "../data/apod";
 
 import {
   CallbackQueryContext,
@@ -8,7 +8,7 @@ import {
   InlineKeyboard,
 } from "grammy";
 import fetch from "node-fetch";
-import { chatsDb } from "firebase";
+import { chatsDb } from "../firebase";
 
 export const apodCommand = async (ctx: CommandContext<Context>) => {
   const apod = await fetchApod();
@@ -55,7 +55,7 @@ export const randomApodCommand = async (
   ctx: CommandContext<Context> | CallbackQueryContext<Context>
 ) => {
   const apod = await fetchRandomApod();
-  console.log('apod', apod)
+
   if (apod && apod[0]) {
     const { title, explanation, hdurl, url, copyright, date } = apod[0];
 
@@ -93,6 +93,42 @@ export const randomApodCommand = async (
   }
 };
 
+export const dateApodCommand = async (ctx: CommandContext<Context>) => {
+  const item = ctx.match;
+  const apod = await fetchDateApod(item);
+
+  if (apod && apod.error) {
+    return ctx.reply(apod.error.message);
+  }
+
+  if (apod) {
+    const { title, explanation, hdurl, url, copyright, date } = apod;
+
+    const message = `<b><a href="${
+      hdurl || url
+    }">${title}</a></b> \n \n<i>${date}</i> \n \n${explanation} \n \n${
+      copyright ? `<b>Copyright:</b> ${copyright}` : " "
+    } `;
+
+    try {
+      await ctx.replyWithPhoto(url, {
+        caption: message,
+        parse_mode: "HTML",
+      });
+    } catch (error) {
+      if (error instanceof GrammyError) {
+        if (error.description === "Bad Request: message caption is too long") {
+          await ctx.reply(message, {
+            parse_mode: "HTML",
+          });
+        }
+      }
+      ctx.reply("Unfortunately, there is no such photo, try another date. Required format 'y-m-d'")
+    }
+  }
+  
+}
+
 export const photoDayStart = async (
   ctx: CommandContext<Context> | CallbackQueryContext<Context>
 ) => {
@@ -106,7 +142,7 @@ export const photoDayStart = async (
   await chatRef.set({ isStartPhotoDay: true }, { merge: true });
   if (!isStartPhotoDay) {
     ctx.reply(
-      "Now the photo of the day will come every day at 12:00 Moscow time."
+      "Now the photo of the day will come every day at 12:00 UTC."
     );
   } else {
     ctx.reply("This command is already enabled!");

@@ -29,15 +29,13 @@ export const fetchRandomApod = async () => {
   }
 };
 
-// export const cronFetchRandomApod = async () => {
-//   const randomApodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}&count=1`;
-//   const apod = await fetch(randomApodUrl).then((res) => res.json());
+export const fetchDateApod = async (date: string) => {
+  const randomApodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}&date=${date}`;
+  const apod = await fetch(randomApodUrl).then((res) => res.json());
 
-//   return schedule.scheduleJob("0 * * * *", async () => {
-//     try {
-//       return apod as TApod[];
-//     } catch (error) {
-//       console.log("eroor", error);
-//     }
-//   });
-// };
+  try {
+    return apod as TApod;
+  } catch (error) {
+    console.log("eroor", error);
+  }
+};

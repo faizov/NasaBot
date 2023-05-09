@@ -1,6 +1,7 @@
 export {
   apodCommand,
   randomApodCommand,
+  dateApodCommand,
   photoDayStart,
   photoDayStop,
 } from "./apod";

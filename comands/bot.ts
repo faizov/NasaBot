@@ -3,9 +3,10 @@ import { CommandContext, Context } from "grammy";
 import { Chat } from "grammy/out/types.node";
 
 import { chatsDb, statsDb } from "./../firebase";
-import { TChat } from "../../types";
+import { TChat } from "../types";
 
 export const initUser = async (chat: Chat) => {
+  console.log('chat.id', chat.id);
   if (chat) {
     const chatRef = chatsDb.doc(`chat-${chat.id}`);
     const dataChat = await chatRef.get();
@@ -33,7 +34,18 @@ export const initUser = async (chat: Chat) => {
 
 export const removeUser = async (id: number) => {
   const chatRef = chatsDb.doc(`chat-${id}`);
-  await chatRef.delete();
+
+  await chatRef.delete().then(async () => {
+    const countUsers = await chatsDb.get().then((snap) => {
+      return snap.size;
+    });
+
+    const countUserObj = {
+      count: countUsers,
+    };
+
+    await statsDb.doc(`users`).set(countUserObj);
+  });
 };
 
 export const startCommand = async (ctx: CommandContext<Context>) => {

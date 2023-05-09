@@ -1,4 +1,4 @@
-import { fetchRandomMars } from "../../data/mars";
+import { fetchRandomMars } from "../data/mars";
 
 import {
   CallbackQueryContext,
