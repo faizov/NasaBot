@@ -121,9 +121,10 @@ export const dateApodCommand = async (ctx: CommandContext<Context>) => {
           await ctx.reply(message, {
             parse_mode: "HTML",
           });
+        } else {
+          ctx.reply("Unfortunately, there is no such photo, try another date. Required format 'y-m-d'")
         }
       }
-      ctx.reply("Unfortunately, there is no such photo, try another date. Required format 'y-m-d'")
     }
   }
   
