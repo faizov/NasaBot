@@ -15,40 +15,40 @@ const sendPhotoToChats = async (
 ) => {
   try {
     chatsId.forEach(async (id) => {
-      try {
-        if (media === "video") {
-          return await bot.sendMessage(id, message, {
-            parse_mode: "HTML",
-          });
-        }
-
-        await bot.sendPhoto(id, url, {
-          caption: message,
-          parse_mode: "HTML",
-        });
-      } catch (error) {
-        console.log("error", error);
-      }
-    });
-  } catch (error) {
-    if (error instanceof GrammyError) {
-      if (error.description === "Bad Request: message caption is too long") {
-        chatsId.forEach(async (id) => {
-          try {
-            await bot.sendMessage(id, message, {
-              parse_mode: "HTML",
+        try {
+            if (media === "video") {
+                return await bot.sendMessage(id, message, {
+                    parse_mode: "HTML",
+                });
+            }
+            await bot.sendPhoto(id, url, {
+                caption: message,
+                parse_mode: "HTML",
             });
-          } catch (error) {
+        }
+        catch (error) {
             console.log("error", error);
-          }
-        });
-      }
-    }
-  }
+            if (error instanceof GrammyError) {
+                if (error.description === "Bad Request: message caption is too long") {
+                    try {
+                        await bot.sendMessage(id, message, {
+                            parse_mode: "HTML",
+                        });
+                    }
+                    catch (error) {
+                        console.log("error", error);
+                    }
+                }
+            }
+        }
+    });
+} catch (error) {
+  console.log('error', error);
+}
 };
 
 export const cronApod = async (bot: Api) => {
-  return schedule.scheduleJob("0 12 * * *", async () => {
+  return schedule.scheduleJob("00 12 * * *", async () => {
     const snapshot = await chatsDb.get();
     const channels = -1001529487393;
     let chats: number[] = [channels];
