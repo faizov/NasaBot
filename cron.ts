@@ -62,7 +62,6 @@ export const cronApod = async (bot: Api) => {
     });
 
     try {
-      console.log("Start cron Apod");
       const apod = await fetchApod();
 
       if (apod) {
@@ -81,7 +80,6 @@ export const cronApod = async (bot: Api) => {
         } `;
 
         if (!hdurl || !buffer || !size) {
-          console.log("apod", apod);
           throw new Error("Unable to fetch image data");
         }
 

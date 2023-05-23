@@ -6,7 +6,6 @@ import { chatsDb, statsDb } from "./../firebase";
 import { TChat } from "../types";
 
 export const initUser = async (chat: Chat) => {
-  console.log('chat.id', chat.id);
   if (chat) {
     const chatRef = chatsDb.doc(`chat-${chat.id}`);
     const dataChat = await chatRef.get();
@@ -59,7 +58,7 @@ export const startCommand = async (ctx: CommandContext<Context>) => {
     return ctx.reply(
       "Hello " +
         ctx.from?.first_name +
-        `! \n\nThe bot is currently under development.\n\nCommand List: \n\n/photo_day - Astronomy Picture of the Day\n\n/mars - Random photo from Mars\n\n/photo_day_start - Daily newsletter Picture of the day at 12 noon Moscow time\n\n/photo_day_stop - Disable Newsletter \n\nChannel Astronomy Picture of the Day: @nasa_channel_bot\n\ngithub.com/faizov/NasaBot`
+        `! \n\nThe bot is currently under development.\n\nCommand List: \n\n/photo_day - Astronomy Picture of the Day\n\n/random_apod - Random APOD\n\n/random_mars - Random photo from Mars\n\n/photo_day_start - Daily newsletter Picture of the day at 09:00 UTC\n\n/photo_day_stop - Disable Newsletter \n\nChannel Astronomy Picture of the Day: @nasa_channel_apod\n\nSupport the developer: ko-fi.com/faizov or boosty.to/itq`
     );
   }
 };

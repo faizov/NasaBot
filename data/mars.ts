@@ -32,8 +32,6 @@ export const fetchRandomMars = async () => {
   while (true) {
     const photoMarsUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${randomDate}&page=${page}&camera=MAST&api_key=${process.env.API_KEY}`;
 
-    console.log("photoMarsUrl", photoMarsUrl);
-
     const { data: mars } = await axios.get<TMarsPhotos>(photoMarsUrl, {
       timeout: 5000,
     });
@@ -73,8 +71,6 @@ export const fetchRandomMars = async () => {
         delay(2000);
         continue;
       }
-
-      console.log("randomMars", randomMars);
 
       return randomMars;
     } catch (error) {

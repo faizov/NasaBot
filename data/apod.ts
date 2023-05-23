@@ -1,41 +1,40 @@
 import fetch from "node-fetch";
 import { config } from "dotenv";
 import { TApod } from "../types";
-// import schedule from "node-schedule";
 
 config();
 
-const apodUrl =
+const baseUrl =
   "https://api.nasa.gov/planetary/apod?api_key=" + process.env.API_KEY;
 
 export const fetchApod = async () => {
-  const apod = await fetch(apodUrl).then((res) => res.json());
+  const apod = await fetch(baseUrl).then((res) => res.json());
 
   try {
     return apod as TApod;
   } catch (error) {
-    console.log("eroor", error);
+    console.log("error", error);
   }
 };
 
 export const fetchRandomApod = async () => {
-  const randomApodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}&count=1`;
+  const randomApodUrl = `${baseUrl}&count=1`;
   const apod = await fetch(randomApodUrl).then((res) => res.json());
 
   try {
     return apod as TApod[];
   } catch (error) {
-    console.log("eroor", error);
+    console.log("error", error);
   }
 };
 
 export const fetchDateApod = async (date: string) => {
-  const randomApodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}&date=${date}`;
+  const randomApodUrl = `${baseUrl}${process.env.API_KEY}&date=${date}`;
   const apod = await fetch(randomApodUrl).then((res) => res.json());
 
   try {
     return apod as TApod;
   } catch (error) {
-    console.log("eroor", error);
+    console.log("error", error);
   }
 };

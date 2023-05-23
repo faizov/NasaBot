@@ -23,10 +23,8 @@ export async function checkImageColor(url: string) {
   }
 
   if (isBlackAndWhite || img.width < 600 || img.height < 600) {
-    // console.log("Это черно-белое изображение");
     return false;
   } else {
-    // console.log("Это цветное изображение");
     return true;
   }
 }

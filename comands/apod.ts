@@ -138,7 +138,6 @@ export const photoDayStart = async (
   const isStartPhotoDay = dataChat.exists
     ? dataChat.data()?.isStartPhotoDay
     : false;
-  console.log("isStartPhotoDay", isStartPhotoDay);
 
   await chatRef.set({ isStartPhotoDay: true }, { merge: true });
   if (!isStartPhotoDay) {

@@ -14,6 +14,7 @@ import {
   startCommand,
 } from "./comands";
 import { cronApod, cronMars } from "./cron";
+import { addUserToDailyUsage } from "./service/statsUser";
 
 config();
 
@@ -36,13 +37,22 @@ bot.on("my_chat_member", (ctx) => {
 
 bot.command("start", startCommand);
 
-bot.command("photo_day", apodCommand);
+bot.command("photo_day", (ctx) => {
+  addUserToDailyUsage(ctx.chat.id) 
+  apodCommand(ctx);
+});
 
-bot.command("random_apod", randomApodCommand);
+bot.command("random_apod", (ctx) => {
+  addUserToDailyUsage(ctx.chat.id) 
+  randomApodCommand(ctx);
+});
 
 bot.command("date_apod", dateApodCommand);
 
-bot.command("random_mars", randomMarsCommand);
+bot.command("random_mars", (ctx) => {
+  addUserToDailyUsage(ctx.chat.id) 
+  randomMarsCommand(ctx);
+});
 
 bot.command("photo_day_start", photoDayStart);
 
