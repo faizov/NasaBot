@@ -8,7 +8,9 @@ const baseUrl =
   "https://api.nasa.gov/planetary/apod?api_key=" + process.env.API_KEY;
 
 export const fetchApod = async () => {
-  const apod = await fetch(baseUrl).then((res) => res.json());
+  const apod = await fetch(baseUrl)
+    .then((res) => res.json())
+    .catch((err) => console.log("err", err));
 
   try {
     return apod as TApod;
@@ -29,7 +31,7 @@ export const fetchRandomApod = async () => {
 };
 
 export const fetchDateApod = async (date: string) => {
-  const randomApodUrl = `${baseUrl}${process.env.API_KEY}&date=${date}`;
+  const randomApodUrl = `${baseUrl}&date=${date}`;
   const apod = await fetch(randomApodUrl).then((res) => res.json());
 
   try {

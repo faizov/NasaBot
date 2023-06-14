@@ -12,9 +12,9 @@ import {
   randomMarsCommand,
   removeUser,
   startCommand,
-} from "./comands";
-import { cronApod, cronMars } from "./cron";
-import { addUserToDailyUsage } from "./service/statsUser";
+} from "./src/comands";
+import { cronApod, cronMars } from "./src/cron/cron";
+import { addUserToDailyUsage } from "./src/service/statsUser";
 
 config();
 
@@ -25,7 +25,6 @@ const bot = new Bot(token);
 bot.on("my_chat_member", (ctx) => {
   const { chat } = ctx;
   const { status } = ctx.update.my_chat_member.new_chat_member;
-
   if (chat) {
     if (status === "member") {
       initUser(chat);
@@ -35,22 +34,28 @@ bot.on("my_chat_member", (ctx) => {
   }
 });
 
+function handler() {
+  return (ctx: any, next: () => void) => {
+    if (ctx.from?.id !== parseInt(process.env.ID_ADMIN!)) {
+      addUserToDailyUsage();
+    }
+    next();
+  };
+}
+
 bot.command("start", startCommand);
 
-bot.command("photo_day", (ctx) => {
-  addUserToDailyUsage(ctx.chat.id) 
+bot.command("photo_day", handler(), (ctx) => {
   apodCommand(ctx);
 });
 
-bot.command("random_apod", (ctx) => {
-  addUserToDailyUsage(ctx.chat.id) 
+bot.command("random_apod", handler(), (ctx) => {
   randomApodCommand(ctx);
 });
 
-bot.command("date_apod", dateApodCommand);
+bot.command("date_apod", handler(), dateApodCommand);
 
-bot.command("random_mars", (ctx) => {
-  addUserToDailyUsage(ctx.chat.id) 
+bot.command("random_mars", handler(), (ctx) => {
   randomMarsCommand(ctx);
 });
 
@@ -60,6 +65,7 @@ bot.command("photo_day_stop", photoDayStop);
 
 bot.callbackQuery(
   "click-random-apod",
+  handler(),
   async (ctx: CallbackQueryContext<Context>) => {
     await randomApodCommand(ctx);
   }
@@ -67,6 +73,7 @@ bot.callbackQuery(
 
 bot.callbackQuery(
   "click-random-mars",
+  handler(),
   async (ctx: CallbackQueryContext<Context>) => {
     try {
       await ctx.answerCallbackQuery({
@@ -83,7 +90,5 @@ bot.callbackQuery(
 );
 
 cronApod(bot.api);
-// cronMars(bot.api)
 
-// bot.start();
 run(bot);

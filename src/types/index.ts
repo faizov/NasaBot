@@ -5,6 +5,7 @@ export type TChat = {
 };
 
 export type TApod = {
+  code: number;
   title: string;
   explanation: string;
   url: string;

@@ -2,8 +2,9 @@ import { CommandContext, Context } from "grammy";
 
 import { Chat } from "grammy/out/types.node";
 
-import { chatsDb, statsDb } from "./../firebase";
+import { chatsDb, statsDb } from "../service/firebase";
 import { TChat } from "../types";
+import { getUserToDailyUsage } from "../service/statsUser";
 
 export const initUser = async (chat: Chat) => {
   if (chat) {
@@ -42,18 +43,24 @@ export const removeUser = async (id: number) => {
     const countUserObj = {
       count: countUsers,
     };
-
+    console.log("remove countUserObj", countUserObj.count);
     await statsDb.doc(`users`).set(countUserObj);
   });
 };
 
 export const startCommand = async (ctx: CommandContext<Context>) => {
+  const trueChatsQuery = chatsDb.where("isStartPhotoDay", "==", true);
+  const countActiveDailyApod = await trueChatsQuery.get();
+  const countUserToday = await getUserToDailyUsage();
+
   const usersRef = statsDb.doc(`users`);
   const dataChat = await usersRef.get();
   const users = dataChat.data();
 
   if (ctx.from?.id === parseInt(process.env.ID_ADMIN!)) {
-    return ctx.reply(`Users: ${users?.count}`);
+    return ctx.reply(
+      `Users: ${users?.count}\n\nActive Daily apod: ${countActiveDailyApod.size}\n\nCount User Today: ${countUserToday}`
+    );
   } else {
     return ctx.reply(
       "Hello " +
