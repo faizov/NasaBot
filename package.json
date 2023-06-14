@@ -2,7 +2,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc -w",
-    "start": "nodemon --es-module-specifier-resolution=node dist/bot.js"
+    "start-dev": "nodemon --es-module-specifier-resolution=node dist/bot.js",
+    "start": "node --es-module-specifier-resolution=node dist/bot.js"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",

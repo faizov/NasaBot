@@ -7,4 +7,5 @@
 node_modules
 
 # dotenv environment variables file
-.env
+.env.production
+.env.development
